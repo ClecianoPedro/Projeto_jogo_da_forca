@@ -56,7 +56,6 @@ def main():
 
     dificuldade = menu_dificuldade()
     
-    # Falta ajustar a mensagem de erro nas dificuldades
     if dificuldade == '1':
         with open("palavras_facil.txt", "r", encoding="utf-8") as arquivo:
             palavras = arquivo.read()
@@ -98,11 +97,7 @@ def main():
             print("\nA palavra é: ", " ".join(letras_certas))
             
             opcao = solicitar_opcao()
-            # A função join em Python é uma ferramenta para manipulação de strings.
-            # Permite combinar elementos de uma lista em uma única string, utilizando um separador específico.
-            # Isso é extremamente útil em situações em que precisamos juntar valores separados por vírgulas, espaços
-            # ou qualquer outro caractere.
-
+            
             if opcao == '1':
 
                 palpite = input("Digite a letra: ").upper()
