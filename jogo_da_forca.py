@@ -77,7 +77,7 @@ def main():
             palavra_aleatoria = random.choice(palavras).upper()
         tentativas = 2
 
-    letras_certas = ["_" for letra in palavra_aleatoria] # Compreensão de lista
+    letras_certas = ["_" for letra in palavra_aleatoria]
     erros = 0
     vitorias = 0
     derrotas = 0
