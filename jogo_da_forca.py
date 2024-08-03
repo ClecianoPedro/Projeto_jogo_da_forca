@@ -1,140 +1,141 @@
 import random
 
 def menu():
-    print("     Bem vindo ao jogo da Forca!\n")
-    print(f"{"-"*15} Menu {"-"*15}\n")
+    print(f'{'-'*15} Menu {'-'*15}')
 
 def menu_dificuldade():
-    print("Selecione a dificuldade desejada [1 / 3]: ")
-    print("1- Fácil")
-    print("2- Médio")
-    print("3- Difícil")
+    print('     Bem vindo ao jogo da Forca!\n')
+    print(f'{'-'*15} Menu {'-'*15}\n')
+    print('Selecione a dificuldade desejada [1 / 3]: \n')
+    print('1- Fácil')
+    print('2- Médio')
+    print('3- Difícil')
 
-    opcao = input("Digite a opção desejada: ")
-    return opcao
+    return input('\nDigite a opção desejada: ')
 
-def informacoes_do_jogador(jogador, tentativas, erros):
-    print(f"Jogador: {jogador}")
-    print(f"Tentativas restantes: {tentativas}")
-    print(f"Erros: {erros}")
+def informacoes_do_jogador(jogador, tentativas, erros, letras_tentadas):
+    print(f'Jogador: {jogador}')
+    print(f'Tentativas restantes: {tentativas}')
+    print(f'Erros: {erros}')
+    print(f'Letras tentadas: {' '.join(letras_tentadas)}')
 
-def solicitar_opcao():
+def verifica_letra(palavra, palpite):
+    if palpite in palavra:
 
-    print("\nEscolha uma opção:\n")
-    print("1 - Chutar uma letra")
-    print("2 - Chutar a palavra\n")
-
-    opcao = input("Digite a opção desejada [1 / 2]: ")
-    return opcao
-
-def verificar_letra(palavra, palpite):
-    if palpite not in palavra:
-
-        return False
+        return True
     
-    return True
+    return False
 
+def atualiza_historico(jogador, tentativas, erros, letras_tentadas, vitoria, palavra):
+    arquivo = open('historico.txt', 'a')
+    arquivo.write(f'\nJogador: {jogador}\n')
+    arquivo.write(f'Tentativas restantes: {tentativas}\n')
+    arquivo.write(f'Erros: {erros}\n')
+    arquivo.write(f'Letras tentadas: {letras_tentadas}\n')
+    arquivo.write(f'Palavra: {palavra}\n')
 
-def palavra_correta(jogador, vitorias, derrotas):
-    vitorias += 1
-    arquivo = open("historico.txt", "w")
-    arquivo.write(f"Jogador: {jogador}\n")
-    arquivo.write(f"Vitorias: {vitorias}\n")
-    arquivo.write(f"Derrotas: {derrotas}\n")
+    if vitoria:
+        arquivo.write('Resultado: Acertou\n')
+    else:
+        arquivo.write('Resultado: Errou\n')
     arquivo.close()
 
-def palavra_errada(jogador, vitorias, derrotas):
-    derrotas += 1
-    arquivo = open("historico.txt", "w")
-    arquivo.write(f"Jogador: {jogador}\n")
-    arquivo.write(f"Vitorias: {vitorias}\n")
-    arquivo.write(f"Derrotas: {derrotas}\n")
-    arquivo.close()
-
+def escolhe_palavra(nome_arquivo):
+    with open(nome_arquivo, 'r', encoding='utf-8') as arquivo:
+        palavras = arquivo.read()
+        palavras = palavras.split((','))
+        palavra = random.choice(palavras).upper()
+        return palavra
 
 def main():
-
+    letras_tentadas = []
+    erros = 0
+    continuar = True
     dificuldade = menu_dificuldade()
+
+    while dificuldade < '1' or dificuldade > '3':
+        print('\nOpcão inválida!\n')
+        dificuldade = menu_dificuldade()
     
     if dificuldade == '1':
-        with open("palavras_facil.txt", "r", encoding="utf-8") as arquivo:
-            palavras = arquivo.read()
-            palavras = palavras.split((','))
-            palavra_aleatoria = random.choice(palavras).upper()
+        nome_arquivo = 'palavras_facil.txt'
         tentativas = 6
 
-    if dificuldade == '2':
-        with open("palavras_medio.txt", "r", encoding="utf-8") as arquivo:
-            palavras = arquivo.read()
-            palavras = palavras.split((','))
-            palavra_aleatoria = random.choice(palavras).upper()
+    elif dificuldade == '2':
+        nome_arquivo = 'palavras_medio.txt'
         tentativas = 4
 
-    if dificuldade == '3':
-        with open("palavras_dificil.txt", "r", encoding="utf-8") as arquivo:
-            palavras = arquivo.read()
-            palavras = palavras.split((','))
-            palavra_aleatoria = random.choice(palavras).upper()
+    else:
+        nome_arquivo = 'palavras_dificil.txt'
         tentativas = 2
-
-    letras_certas = ["_" for letra in palavra_aleatoria]
-    erros = 0
-    vitorias = 0
-    derrotas = 0
-    acertos = 0
-    aux = len(palavra_aleatoria)
-
-    menu()
-    print(palavra_aleatoria)
-    jogador = input("Como deseja ser chamado?: ").upper()
-
     
+    palavra_aleatoria = escolhe_palavra(nome_arquivo)
+    palavra_oculta = ['_' for letra in palavra_aleatoria]
+    print(palavra_aleatoria)
+    jogador = input('\nComo deseja ser chamado: ').upper()
+
+    while len(jogador) == 0:
+        print('Nome inválido!')
+        jogador = input('\nComo deseja ser chamado: ').upper()
+ 
     try:
-
-        while tentativas > 0:
-
-            informacoes_do_jogador(jogador, tentativas, erros)
-            print("\nA palavra é: ", " ".join(letras_certas))
+        while tentativas > 0 and continuar:
             
-            opcao = solicitar_opcao()
-            
-            if opcao == '1':
+            informacoes_do_jogador(jogador, tentativas, erros, letras_tentadas)
+            print('\nA palavra é: ', ' '.join(palavra_oculta))  
 
-                palpite = input("Digite a letra: ").upper()
-                contem_letra = verificar_letra(palavra_aleatoria, palpite)
-                if contem_letra:
-                    for i in range(len(palavra_aleatoria)):
-                        if palavra_aleatoria[i] == palpite:
-                            letras_certas[i] = palpite
-                            acertos += 1
-                    if acertos == aux:
-                        print(f"Parabéns! Você advinhou a palavra: {palavra_aleatoria.upper()}")
-                        palavra_correta(jogador, vitorias, derrotas)
-                        break
+            palpite = input('\nDigite uma letra ou a palavra inteira: ').upper()
+        
+            if palpite.isnumeric() or len(palpite) == 0:
+                print('\nO palpite não é uma letra\n')
 
-                else:
-                    erros += 1
-                    tentativas -= 1
-                    print(f"Você errou pela {erros}° vez. Tente novamente!\n")
+            elif  palpite in letras_tentadas:
+                print('\nA letra digitada já foi tentada!\n')
 
-            elif opcao == '2':
+            elif len(palpite) > 1 and len(palpite) < len(palavra_aleatoria):
+                print('Digite apenas uma letra ou chute a palavra inteira!\n')
 
-                palpite = input("Digite a palavra: ").upper()
-                    
-                if palpite == palavra_aleatoria:
-                    print(f"Parabéns! Você advinhou a palavra: {palavra_aleatoria.upper()}")
-                    palavra_correta(jogador, vitorias, derrotas)
-                else:
-                    print(f"Você perdeu! A palavra era: {palavra_aleatoria.upper()}")
-                    palavra_errada(jogador, vitorias, derrotas)
-                break
-            else:
-                print("Opção inválida!!!\n")
-        else:
-            print(f"Você perdeu! A palavra era: {palavra_aleatoria.upper()}")
-            palavra_errada(jogador, vitorias, derrotas)
+            elif len(palpite) > len(palavra_aleatoria):
+                print('A quantidade de letras excede o tamanho da palavra!\n')
+
+            elif palpite == palavra_aleatoria:
+                print(f'\nParabéns! Você advinhou a palavra: {palavra_aleatoria.upper()}')
+                letras_tentadas = ' '.join(palpite)
+                atualiza_historico(jogador, tentativas, erros, letras_tentadas, True, palavra_aleatoria)
+                continuar = False
+
+            elif verifica_letra(palavra_aleatoria, palpite):
+                for i in range(len(palavra_aleatoria)):
+
+                    if palavra_aleatoria[i] == palpite:
+                        palavra_oculta[i] = palpite
+                        if palpite not in letras_tentadas:
+                            letras_tentadas.append(palpite)
+
+                    if '_' not in palavra_oculta:
+                        print(f'\nParabéns! Você advinhou a palavra: {palavra_aleatoria.upper()}')
+                        letras_tentadas = ' '.join(letras_tentadas)
+                        atualiza_historico(jogador, tentativas, erros, letras_tentadas, True, palavra_aleatoria)
+                        continuar = False
+
+            elif verifica_letra (palavra_aleatoria, palpite) == False and len(palpite) == len(palavra_aleatoria):
+                erros = 1
+                print(f'\nVocê perdeu! A palavra era: {palavra_aleatoria.upper()}')
+                letras_tentadas = ' '.join(palpite)
+                continuar = False
+
+            elif verifica_letra(palavra_aleatoria, palpite) == False:
+                erros += 1
+                tentativas -= 1
+                letras_tentadas.append(palpite)
+                print(f'\nVocê errou pela {erros}° vez. Tente novamente!\n')
+
+        if tentativas == 0:
+            print(f'\nVocê perdeu! A palavra era: {palavra_aleatoria.upper()}')
+            letras_tentadas = ' '.join(letras_tentadas)
+            atualiza_historico(jogador, tentativas, erros, letras_tentadas, False, palavra_aleatoria)
+
     except Exception as e:
-        print(f"Erro inesperado {e}")
-
+        print(f'Erro inesperado: {e}')
 
 main()
