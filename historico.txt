@@ -1,0 +1,7 @@
+
+Jogador: A
+Tentativas restantes: 6
+Erros: 0
+Letras tentadas: M A R I A
+Palavra: MARIA
+Resultado: Acertou
