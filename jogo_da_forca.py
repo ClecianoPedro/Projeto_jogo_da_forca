@@ -71,7 +71,6 @@ def main():
     
     palavra_aleatoria = escolhe_palavra(nome_arquivo)
     palavra_oculta = ['_' for letra in palavra_aleatoria]
-    print(palavra_aleatoria)
     jogador = input('\nComo deseja ser chamado: ').upper()
 
     while len(jogador) == 0:
